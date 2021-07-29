@@ -1,9 +1,7 @@
 ﻿using dbdocs.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -14,21 +12,22 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace dbdocs
+namespace dbdocs.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ShellView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ShellView : UserControl, IShellView
     {
-        private readonly IShellView _shellView;
+        private readonly IShellViewModel _shellViewModel;
 
-        public MainWindow(IShellView shellView)
+        public ShellView(IShellViewModel shellViewModel)
         {
             InitializeComponent();
-            _shellView = shellView;
-
-            Content = _shellView;
+            _shellViewModel = shellViewModel;
+            DataContext = _shellViewModel;
         }
+
+
     }
 }

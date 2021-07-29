@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DryIoc;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +14,15 @@ namespace dbdocs
     /// </summary>
     public partial class App : Application
     {
+        public IContainer AppContainer { get; private set; }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            this.AppContainer = StartUp.Bootstrapper.ConfigureContainer();
+
+            AppContainer.Resolve<MainWindow>().Show();
+        }
     }
 }
