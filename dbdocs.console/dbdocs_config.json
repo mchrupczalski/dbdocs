@@ -1,0 +1,18 @@
+{
+  "Server Connection Info": {
+    "Data Source": "HOME-WORKHORSE\\DEVSERVER",
+    "Initial Catalog": "PDM",
+    "Integrated Security": true,
+    "User ID": null,
+    "Password": null,
+    "Connect Timeout": 60,
+    "Encrypt": false,
+    "Trust Server Certificate": false,
+    "Application Intent": "ReadOnly",
+    "Multi Subnet Failover": false
+  },
+  "Databases": [
+    "PDM",
+    "PDM2"
+  ]
+}

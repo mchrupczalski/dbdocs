@@ -1,0 +1,15 @@
+{
+  "Data Source": "HOME - WORKHORSE\DEVSERVER",
+  "Databases": [
+    "PDM",
+    "PDM2"
+  ],
+  "Integrated Security": true,
+  "User ID": null,
+  "Password": null,
+  "Connect Timeout": 60,
+  "Encrypt": false,
+  "Trust Server Certificate": false,
+  "Application Intent": "Read",
+  "Multi Subnet Failover": false
+}
