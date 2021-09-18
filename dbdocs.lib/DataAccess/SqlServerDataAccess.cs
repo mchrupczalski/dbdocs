@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using dbdocs.lib.Interfaces;
 using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -48,6 +49,15 @@ namespace dbdocs.lib.DataAccess
                 IEnumerable<T> output = connection.Query<T>(query, commandType: CommandType.Text);
                 return output;
             }
+        }
+
+        public IEnumerable<T> ExecuteText_LoadModelCollection_Multimapping<T,U>(string query, string splitOn, Func<T,U,T> map)
+        {
+            using (var cnx = _dbConnectionFactory.GetDBConnection())
+            {
+                return cnx.Query<T, U, T>(query, map, splitOn: splitOn).Distinct();
+            }
+
         }
     }
 }

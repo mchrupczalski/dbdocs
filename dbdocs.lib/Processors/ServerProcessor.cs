@@ -43,9 +43,25 @@ namespace dbdocs.lib.Processors
         private void ProcessDatabase(DatabaseModel db)
         {
             if (!_serverDataService.IsUserDbo(db.Name))
+            {
                 Console.WriteLine($"Cannot process { db.Name } database - dbo access required.");
+                return;
+            }
 
-            // get tables
+            db.Tables = ProcessTables(db.Name);
+        }
+
+        private List<TableModel> ProcessTables(string dbName)
+        {
+            var results = _serverDataService.GetTableModels(dbName).ToList();
+            var tables = results.GroupBy(t => t.Uid).Select(c =>
+            {
+                var groupedTable = c.First();
+                groupedTable.Fields = c.Select(t => t.Fields.Single()).ToList();
+                return groupedTable;
+            });
+
+            return tables.ToList();
         }
     }
 }

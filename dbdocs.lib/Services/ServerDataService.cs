@@ -1,37 +1,39 @@
 ﻿using dbdocs.lib.Infrastructure;
 using dbdocs.lib.Interfaces;
 using dbdocs.lib.Models;
+using System;
 using System.Collections.Generic;
 
 namespace dbdocs.lib.Services
 {
     public class ServerDataService : DataServiceBase, IServerDataService
     {
-        public ServerDataService(IDataAccess dataAccess) : base(dataAccess)
+        private readonly ISqlLoader _sqlLoader;
+
+        public ServerDataService(IDataAccess dataAccess, ISqlLoader sqlLoader) : base(dataAccess)
         {
+            _sqlLoader = sqlLoader;
         }
 
         public IEnumerable<DatabaseModel> GetDatabaseModels(string[] databasesNames)
         {
-            string query = string.Empty;
-            query += $"\nSELECT";
-            query += $"\n     d.database_id                  AS [Uid]";
-            query += $"\n    ,d.name                         AS [Name]";
-            query += $"\n    ,d.create_date                  AS CreateDate";
-            query += $"\n    ,d.compatibility_level          AS CompatibilityLevel";
-            query += $"\n    ,d.collation_name               AS Collation";
-            query += $"\n    ,d.user_access_desc             AS UserAccess";
-            query += $"\n    ,d.is_read_only                 AS IsReadOnly";
-            query += $"\nFROM sys.databases AS d";
-            query += $"\nWHERE d.name IN ('{ string.Join("','", databasesNames) }')";
-
+            string query = _sqlLoader.GetQuery_Database(databasesNames);
             return DataAccess.ExecuteTextLoadModelCollection<DatabaseModel>(query);
         }
 
         public bool IsUserDbo(string dbName)
         {
-            string query = $"USE { dbName }; SELECT CAST(IS_MEMBER('db_owner') AS BIT) AS IsDbo;";
+            string query = _sqlLoader.GetQuery_DboCheck(dbName);
             return DataAccess.ExecuteTextWithOutput<bool>(query);
+        }
+
+        public IEnumerable<TableModel> GetTableModels(string dbName)
+        {
+            string query = _sqlLoader.GetQuery_Tables(dbName);
+            Func<TableModel, TableFieldModel, TableModel> func = (t, c) => { t.Fields.Add(c); return t; };
+
+            //return DataAccess.ExecuteTextLoadModelCollection<TableModel>(query);
+            return DataAccess.ExecuteText_LoadModelCollection_Multimapping<TableModel, TableFieldModel>(query, "ColumnId", func);
         }
     }
 }

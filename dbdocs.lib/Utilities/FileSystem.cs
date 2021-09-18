@@ -15,5 +15,13 @@ namespace dbdocs.lib.Utilities
             var sr = new StreamReader(filePath);
             return sr.ReadToEnd();
         }
+
+        public void SaveTextFile(string fileText, string filePath)
+        {
+            using (var writer = new StreamWriter(filePath))
+            {
+                writer.WriteLine(fileText);
+            }
+        }
     }
 }

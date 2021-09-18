@@ -5,6 +5,7 @@ using dbdocs.lib.Processors;
 using dbdocs.lib.Providers;
 using dbdocs.lib.Serializers;
 using dbdocs.lib.Services;
+using dbdocs.lib.SQL;
 using dbdocs.lib.Utilities;
 using System;
 using System.Collections.Generic;
@@ -29,16 +30,31 @@ namespace dbdocs.console
                 string cnxString = _config.ServerConnectionInfo.ConnectionString;
                 var cnxFactory = new DbConnectionFactory(cnxString);
                 var dal = new SqlServerDataAccess(cnxFactory);
-                var sds = new ServerDataService(dal);
+                var fs = new FileSystem();
+                var sql = new SqlLoader(fs);
+                var sds = new ServerDataService(dal, sql);
                 var processor = new ServerProcessor(_config, sds);
-                var serverInfo = processor.ProcessServer();
+                var serverInfo = (ServerModel)processor.ProcessServer();
+                GenerateDoc(serverInfo);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"ERROR: { ex.Message }");
             }
 
+            Console.WriteLine("done");
             Console.ReadLine();
+        }
+
+        private static void GenerateDoc(ServerModel serverModel)
+        {
+            string fileSavePath = $"{ Directory.GetCurrentDirectory() }\\dbdocs\\db_docs_generated.json";
+
+            var serializer = new JsonSerializer();
+            string docJson = serializer.Serialize<ServerModel>(serverModel);
+            var fs = new FileSystem();
+            fs.SaveTextFile(docJson, fileSavePath);
+
         }
 
         private static JsonConfigModel LoadConfig()

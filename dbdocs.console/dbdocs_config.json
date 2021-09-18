@@ -12,7 +12,7 @@
     "Multi Subnet Failover": false
   },
   "Databases": [
-    "PDM",
-    "PDM2"
+    "db1",
+    "db2"
   ]
 }
